@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: #0A0A0B;
+  color: #F2F2ED;
+  font-family: "Manrope", sans-serif;
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+#root {
+  overflow-x: hidden;
+}
+
+::selection {
+  background: #E8FF3C;
+  color: #0A0A0B;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0A0A0B;
+}
+::-webkit-scrollbar-thumb {
+  background: #29C5F0;
+  border-radius: 0;
+}
+
+.tag-label {
+  position: relative;
+  font-family: "Space Mono", monospace;
+  clip-path: polygon(0% 20%, 8% 0%, 100% 0%, 100% 80%, 92% 100%, 0% 100%);
+}
+
+.tag-label::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 6px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.5;
+}
+
+.text-outline {
+  -webkit-text-stroke: 1.5px #29C5F0;
+  color: transparent;
+}
+
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(41, 197, 240, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(41, 197, 240, 0.08) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 2px solid #E8FF3C;
+  outline-offset: 2px;
+}
