@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/BigbullSneakerHouse/',
+  base: process.env.VITE_BASE || "/",
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
