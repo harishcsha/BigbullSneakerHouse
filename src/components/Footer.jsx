@@ -19,7 +19,7 @@ export default function Footer() {
             </div>
           </div>
           <p className="text-mute text-sm font-body leading-relaxed max-w-xs">
-            Puma, Adidas & more — real shoes, real sizes, no lottery. Based in Bengaluru,
+            Puma, Adidas & more — real shoes, real sizes, no lottery. Based in Davanagere, Karnataka, India. We ship nationwide and internationally —
             shipped everywhere.
           </p>
           <div className="flex gap-4 mt-5">
