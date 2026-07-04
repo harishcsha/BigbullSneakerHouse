@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaWhatsapp } from "react-icons/fa";
-import { FiLock } from "react-icons/fi";
+import { FiLock, FiShare2 } from "react-icons/fi";
 import { useCart } from "../context/CartContext";
 import site from "../config/site";
 
@@ -24,7 +24,18 @@ export default function Checkout() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ name: "", phone: "", address: "", pincode: "" });
   const [placing, setPlacing] = useState(false);
+  const [sharingPhotos, setSharingPhotos] = useState(false);
+  const [canShareFiles, setCanShareFiles] = useState(false);
   const [error, setError] = useState("");
+
+  // Feature-detect the Web Share API's file-sharing support (mobile browsers
+  // mostly; desktop Chrome/Firefox generally don't support sharing files).
+  useEffect(() => {
+    if (navigator.share && navigator.canShare) {
+      const probe = new File(["probe"], "probe.txt", { type: "text/plain" });
+      setCanShareFiles(navigator.canShare({ files: [probe] }));
+    }
+  }, []);
 
   const shipping = subtotal >= FREE_SHIP_THRESHOLD || subtotal === 0 ? 0 : SHIPPING_FLAT;
   const total = subtotal + shipping;
@@ -37,6 +48,7 @@ export default function Checkout() {
     const lines = items.map(
       (i) => `• ${i.name} (${i.color}, Size ${i.size}) x${i.quantity} — ${site.currencySymbol}${(i.price * i.quantity).toLocaleString("en-IN")}`
     );
+    const imageUrls = items.map((i) => i.image);
     return [
       `New order from ${form.name || "a customer"}:`,
       ...lines,
@@ -45,6 +57,7 @@ export default function Checkout() {
       `Total: ${site.currencySymbol}${total.toLocaleString("en-IN")}`,
       form.phone ? `Phone: ${form.phone}` : "",
       form.address ? `Address: ${form.address}, ${form.pincode}` : "",
+      imageUrls.length ? `Images: [${imageUrls.join(", ")}]` : "",
     ]
       .filter(Boolean)
       .join("\n");
@@ -57,6 +70,58 @@ export default function Checkout() {
     }
     const text = encodeURIComponent(orderSummaryText());
     window.open(`https://wa.me/${site.whatsappNumber}?text=${text}`, "_blank");
+  };
+
+  // Attaches the actual product photos as files via the device's native share
+  // sheet, so they show up as real inline images in WhatsApp (or wherever the
+  // customer shares to) rather than just a link preview. The customer picks
+  // WhatsApp and the shop's contact themselves in the share sheet — this API
+  // has no way to target a specific number the way wa.me links do.
+  const handleShareWithPhotos = async () => {
+    if (!formValid) {
+      setError("Fill in your name, phone, address & pincode first.");
+      return;
+    }
+    setError("");
+    setSharingPhotos(true);
+    try {
+      const files = (
+        await Promise.all(
+          items.map(async (item, idx) => {
+            try {
+              const res = await fetch(item.image);
+              const blob = await res.blob();
+              const ext = blob.type.split("/")[1] || "jpg";
+              return new File([blob], `${item.name.replace(/\s+/g, "-")}-${idx}.${ext}`, {
+                type: blob.type || "image/jpeg",
+              });
+            } catch {
+              return null; // skip any image that fails to fetch (e.g. CORS)
+            }
+          })
+        )
+      ).filter(Boolean);
+
+      const shareData = {
+        title: `${site.name} — New Order`,
+        text: orderSummaryText(),
+        files,
+      };
+
+      if (files.length && navigator.canShare && navigator.canShare({ files })) {
+        await navigator.share(shareData);
+      } else {
+        // Fall back to a text-only share if the photos couldn't be attached
+        await navigator.share({ title: shareData.title, text: shareData.text });
+        setError("Photos couldn't be attached on this browser, so only order details were shared.");
+      }
+    } catch (err) {
+      if (err?.name !== "AbortError") {
+        setError("Sharing didn't go through. Try the WhatsApp button instead.");
+      }
+    } finally {
+      setSharingPhotos(false);
+    }
   };
 
   const handleRazorpayPay = async () => {
@@ -195,8 +260,20 @@ export default function Checkout() {
             >
               <FaWhatsapp size={20} /> PLACE ORDER VIA WHATSAPP
             </button>
+            {canShareFiles && (
+              <button
+                onClick={handleShareWithPhotos}
+                disabled={sharingPhotos}
+                className="w-full flex items-center justify-center gap-2 border-2 border-white/20 text-bone font-body font-bold py-4 hover:border-cyan hover:text-cyan transition-colors disabled:opacity-60"
+              >
+                <FiShare2 size={18} />
+                {sharingPhotos ? "PREPARING PHOTOS..." : "SHARE ORDER WITH PHOTOS"}
+              </button>
+            )}
             <p className="text-xs text-mute font-body text-center pt-1">
-              Card, UPI & netbanking are processed securely by Razorpay. Prefer to talk it through first? Order over WhatsApp instead.
+              Card, UPI & netbanking are processed securely by Razorpay. The WhatsApp button opens
+              a chat with us directly and previews your item photos as links
+              {canShareFiles && " — or use \"Share with Photos\" to send the actual images and pick WhatsApp yourself"}.
             </p>
           </div>
         </div>
