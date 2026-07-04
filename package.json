@@ -7,11 +7,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:github": "VITE_BASE=/HarishPortfolio/ vite build",
-    "build:vercel": "VITE_BASE=/ vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "predeploy": "npm run build:github",
+    "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
