@@ -8,6 +8,8 @@ const site = {
   name: "BigBull Sneaker House",
   tagline: "Davanagere's House of Kicks",
   instagram: "https://www.instagram.com/bigbullsneakerhouse/",
+  founder: "Anupama Kenchanagoudra",
+  foundedDate: "November 27, 2025",
 
   // ⚠️ PLACEHOLDER — replace with the real shop WhatsApp number,
   // in international format with no spaces or symbols, e.g. "919876543210"

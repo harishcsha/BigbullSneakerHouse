@@ -10,6 +10,7 @@ const links = [
   { to: "/shop", label: "Shop" },
   { to: "/shop?category=shoes", label: "Shoes" },
   { to: "/shop?category=tshirts", label: "T-Shirts" },
+  { to: "/about", label: "About" },
   { to: "/visit", label: "Visit Us" },
 ];
 

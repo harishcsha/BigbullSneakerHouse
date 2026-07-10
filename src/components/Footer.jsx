@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { FiInstagram } from "react-icons/fi";
+import { FiInstagram, FiMonitor } from "react-icons/fi";
 import { FaWhatsapp } from "react-icons/fa";
 import site from "../config/site";
 import logo from "../assets/logo.jpg";
@@ -43,6 +43,14 @@ export default function Footer() {
             <li><Link to="/shop?category=shoes" className="hover:text-bone">Shoes</Link></li>
             <li><Link to="/shop?category=tshirts" className="hover:text-bone">T-Shirts</Link></li>
             <li><Link to="/shop" className="hover:text-bone">All Products</Link></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 className="font-tag text-xs uppercase tracking-widest text-cyan mb-4">Company</h4>
+          <ul className="space-y-2 font-body text-sm text-mute">
+            <li><Link to="/about" className="hover:text-bone">About Us</Link></li>
+            <li><Link to="/terms" className="hover:text-bone">Terms & Conditions</Link></li>
             <li><Link to="/visit" className="hover:text-bone">Visit the Store</Link></li>
           </ul>
         </div>
@@ -57,8 +65,14 @@ export default function Footer() {
           </p>
         </div>
       </div>
-      <div className="border-t border-white/10 py-5 text-center text-mute text-xs font-body">
-        © {new Date().getFullYear()} BigBull Sneaker House. All rights reserved.
+      <div className="border-t border-white/10 py-5">
+        <div className="max-w-7xl mx-auto px-6 lg:px-10 flex flex-col sm:flex-row items-center gap-2 text-mute text-xs font-body">
+          <p>© {new Date().getFullYear()} {site.name}. All rights reserved.</p>
+          <p className="flex items-center gap-1.5">
+            <FiMonitor size={14} className="text-cyan" />
+            Website designed by <a href="https://harishcsha.github.io/HarishPortfolio/" target="_blank" rel="noopener noreferrer" className="text-bone font-semibold hover:text-cyan">Harish C Jingade</a>
+          </p>
+        </div>
       </div>
     </footer>
   );
